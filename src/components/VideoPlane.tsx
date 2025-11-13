@@ -28,7 +28,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     video.playsInline = true;
     video.preload = 'auto'; // より積極的な事前読み込み
     video.defaultMuted = true; // デフォルトでミュート
-    
+
     // モバイル対応の設定を強化
     video.setAttribute('playsinline', 'true');
     video.setAttribute('webkit-playsinline', 'true');
@@ -36,15 +36,15 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     video.setAttribute('autoplay', 'false');
     video.setAttribute('controls', 'false');
     video.setAttribute('disablepictureinpicture', 'true');
-    
+
     // iOS Safari対応
     video.style.objectFit = 'cover';
     video.style.width = '100%';
     video.style.height = '100%';
-    
+
     let textureCreated = false;
     let playAttempted = false;
-    
+
     // エラーハンドリング
     const handleError = (error: Event) => {
       console.error('Video loading error for', videoSrc, ':', error);
@@ -53,7 +53,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     // 動画が読み込まれたらテクスチャを作成
     const handleLoadedData = () => {
       if (textureCreated) return;
-      
+
       try {
         // 動画が実際に再生可能な状態になってからテクスチャを作成
         if (video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0) {
@@ -67,7 +67,14 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
           setVideoTexture(texture);
           setIsLoaded(true);
           textureCreated = true;
-          console.log('Video texture created for:', videoSrc, 'Size:', video.videoWidth, 'x', video.videoHeight);
+          console.log(
+            'Video texture created for:',
+            videoSrc,
+            'Size:',
+            video.videoWidth,
+            'x',
+            video.videoHeight
+          );
         } else {
           console.log('Video not ready yet, waiting...', videoSrc);
         }
@@ -80,17 +87,17 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     const tryPlay = async () => {
       if (playAttempted) return;
       playAttempted = true;
-      
+
       try {
         // 動画の準備状態を確認
         if (video.readyState >= 2) {
           video.currentTime = 0;
           const playPromise = video.play();
-          
+
           if (playPromise !== undefined) {
             await playPromise;
             console.log('Video playing successfully:', videoSrc);
-            
+
             // 再生開始後にテクスチャを作成（黒い画面を避ける）
             if (!textureCreated && video.videoWidth > 0 && video.videoHeight > 0) {
               handleLoadedData();
@@ -151,10 +158,10 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
 
     // グローバルなユーザーインタラクションリスナー
     const interactionEvents = ['touchstart', 'touchend', 'click', 'keydown'];
-    interactionEvents.forEach(eventType => {
-      document.addEventListener(eventType, handleUserInteraction, { 
-        once: false, 
-        passive: true 
+    interactionEvents.forEach((eventType) => {
+      document.addEventListener(eventType, handleUserInteraction, {
+        once: false,
+        passive: true,
       });
     });
 
@@ -162,7 +169,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     const handleGlobalInteraction = () => {
       handleUserInteraction();
     };
-    
+
     window.addEventListener('userInteractionDetected', handleGlobalInteraction);
 
     videoRef.current = video;
@@ -178,7 +185,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
 
     return () => {
       clearTimeout(timer);
-      
+
       // イベントリスナーを削除
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
@@ -186,13 +193,13 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
       video.removeEventListener('canplaythrough', tryPlay);
       video.removeEventListener('playing', handlePlaying);
       video.removeEventListener('error', handleError);
-      
-      interactionEvents.forEach(eventType => {
+
+      interactionEvents.forEach((eventType) => {
         document.removeEventListener(eventType, handleUserInteraction);
       });
-      
+
       window.removeEventListener('userInteractionDetected', handleGlobalInteraction);
-      
+
       // 動画リソースをクリーンアップ
       video.pause();
       video.src = '';

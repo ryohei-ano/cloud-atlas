@@ -15,32 +15,32 @@ const generateRandomPosition = (index: number): [number, number, number] => {
   const itemsPerLayer = 10; // 各層に10個
   const currentLayer = Math.floor(index / itemsPerLayer);
   const indexInLayer = index % itemsPerLayer;
-  
+
   // 各層の基本半径（カメラから見えやすいように調整）
-  const baseRadius = 8 + (currentLayer * 6); // 8, 14, 20, 26, 32...
-  
+  const baseRadius = 8 + currentLayer * 6; // 8, 14, 20, 26, 32...
+
   // フィボナッチ螺旋を使用して均等分布
   const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // 黄金角
   const theta = indexInLayer * goldenAngle;
-  const phi = Math.acos(1 - 2 * (indexInLayer + 0.5) / itemsPerLayer);
-  
+  const phi = Math.acos(1 - (2 * (indexInLayer + 0.5)) / itemsPerLayer);
+
   // 球面座標から直交座標への変換
   const x = baseRadius * Math.sin(phi) * Math.cos(theta);
   const y = baseRadius * Math.cos(phi);
   const z = baseRadius * Math.sin(phi) * Math.sin(theta);
-  
+
   // Y座標を調整（カメラの初期位置[0,0,30]から見て被らないように）
   const adjustedY = y * 0.3 + (Math.random() - 0.5) * 4; // Y座標をさらに圧縮
-  
+
   // Z座標を調整（カメラの前方により多く配置）
   const adjustedZ = z * 0.7 + (Math.random() - 0.5) * 8; // Z軸方向の範囲を狭める
-  
+
   // 追加のランダム性（重複を避けるため）
   const randomOffset = 1.0;
   const offsetX = (Math.random() - 0.5) * randomOffset;
   const offsetY = (Math.random() - 0.5) * randomOffset;
   const offsetZ = (Math.random() - 0.5) * randomOffset;
-  
+
   return [x + offsetX, adjustedY + offsetY, adjustedZ + offsetZ];
 };
 
@@ -48,7 +48,7 @@ const generateRandomPosition = (index: number): [number, number, number] => {
 function LoadingText({ progress, theme }: { progress: number; theme: Theme }) {
   // プログレスに基づいてバーの幅を計算
   const barWidth = (progress / 100) * 3.6; // 最大3.6の幅
-  const barPosition = -1.8 + (barWidth / 2); // 左端から開始
+  const barPosition = -1.8 + barWidth / 2; // 左端から開始
 
   return (
     <group position={[0, 0, 0]}>
@@ -62,19 +62,19 @@ function LoadingText({ progress, theme }: { progress: number; theme: Theme }) {
       >
         Loading...
       </Text>
-      
+
       {/* Loading bar background (outer border) */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[4, 0.4, 0.1]} />
         <meshBasicMaterial color={theme.textColor} />
       </mesh>
-      
+
       {/* Loading bar background (inner) - transparent */}
       <mesh position={[0, 0, 0.05]}>
         <boxGeometry args={[3.8, 0.3, 0.1]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
-      
+
       {/* Loading bar fill - animated */}
       {barWidth > 0 && (
         <mesh position={[barPosition, 0, 0.1]}>
@@ -82,21 +82,17 @@ function LoadingText({ progress, theme }: { progress: number; theme: Theme }) {
           <meshBasicMaterial color={theme.textColor} />
         </mesh>
       )}
-      
+
       {/* Progress segments (8-bit style) */}
       {Array.from({ length: 10 }, (_, i) => {
         const segmentProgress = (progress - i * 10) / 10;
         const segmentOpacity = Math.max(0, Math.min(1, segmentProgress));
-        const segmentX = -1.6 + (i * 0.36);
-        
+        const segmentX = -1.6 + i * 0.36;
+
         return segmentOpacity > 0 ? (
           <mesh key={i} position={[segmentX, 0, 0.15]}>
             <boxGeometry args={[0.3, 0.15, 0.05]} />
-            <meshBasicMaterial 
-              color={theme.textColor} 
-              transparent 
-              opacity={segmentOpacity}
-            />
+            <meshBasicMaterial color={theme.textColor} transparent opacity={segmentOpacity} />
           </mesh>
         ) : null;
       })}
@@ -114,37 +110,37 @@ const generateVideoPosition = (index: number): [number, number, number] => {
   const seededRandom1 = random1 - Math.floor(random1);
   const seededRandom2 = random2 - Math.floor(random2);
   const seededRandom3 = random3 - Math.floor(random3);
-  
+
   // より散らばった配置
   const itemsPerLayer = 4; // 各層に4個（さらに散らばらせる）
   const currentLayer = Math.floor(index / itemsPerLayer);
   const indexInLayer = index % itemsPerLayer;
-  
+
   // さらに広い範囲に配置
-  const baseRadius = 4 + (currentLayer * 6); // 4, 10, 16, 22...
-  
+  const baseRadius = 4 + currentLayer * 6; // 4, 10, 16, 22...
+
   // フィボナッチ螺旋を使用して均等分布
   const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // 黄金角
   const theta = indexInLayer * goldenAngle;
-  const phi = Math.acos(1 - 2 * (indexInLayer + 0.5) / itemsPerLayer);
-  
+  const phi = Math.acos(1 - (2 * (indexInLayer + 0.5)) / itemsPerLayer);
+
   // 球面座標から直交座標への変換
   const x = baseRadius * Math.sin(phi) * Math.cos(theta);
   const y = baseRadius * Math.cos(phi);
   const z = baseRadius * Math.sin(phi) * Math.sin(theta);
-  
+
   // Y座標を調整（さらに縦方向に散らばらせる）
   const adjustedY = y * 0.6 + (seededRandom1 - 0.5) * 6;
-  
+
   // Z座標を調整（前後にさらに散らばらせる）
   const adjustedZ = z * 1.0 + (seededRandom2 - 0.5) * 8;
-  
+
   // 追加のランダム性を増加（固定シード使用）
   const randomOffset = 2.0;
   const offsetX = (seededRandom3 - 0.5) * randomOffset;
   const offsetY = (seededRandom1 - 0.5) * randomOffset;
   const offsetZ = (seededRandom2 - 0.5) * randomOffset;
-  
+
   return [x + offsetX, adjustedY + offsetY, adjustedZ + offsetZ];
 };
 
@@ -161,7 +157,7 @@ const videoFiles = [
   '/video/09.mp4',
   '/video/10.mp4',
   '/video/11.mp4',
-  '/video/12.mp4'
+  '/video/12.mp4',
 ];
 
 // シーンの内容
@@ -186,17 +182,13 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
   const generateLatestPosition = (index: number, total: number): [number, number, number] => {
     const radius = 8;
     const angle = (index * Math.PI * 2) / Math.max(total, 1);
-    return [
-      Math.cos(angle) * radius,
-      Math.sin(angle) * radius * 0.5,
-      10 + index * 2
-    ];
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.5, 10 + index * 2];
   };
 
   // ランダムにメモリを選択する関数（表示件数を適度に調整）
   const selectRandomMemories = (memories: Memory[], count: number = 50) => {
     if (memories.length === 0) return [];
-    
+
     // 表示数を50件に調整
     const result: Memory[] = [];
     for (let i = 0; i < Math.min(count, memories.length * 2); i++) {
@@ -209,7 +201,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
   // ローディングプログレスを管理
   useEffect(() => {
     const progressInterval = setInterval(() => {
-      setLoadingProgress(prev => {
+      setLoadingProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           return 100;
@@ -224,7 +216,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
   // メモリデータを取得
   useEffect(() => {
     let isMounted = true;
-    
+
     const fetchMemories = async () => {
       try {
         const response = await fetch('/api/get-memories');
@@ -232,16 +224,16 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           throw new Error('Failed to fetch memories');
         }
         const data = await response.json();
-        
+
         if (isMounted) {
           setAllMemories(data);
-          
+
           // ランダムに選択したメモリを表示
           const randomMemories = selectRandomMemories(data);
           setDisplayedMemories(randomMemories);
-          
+
           // アニメーションを再開始するためにキーを更新
-          setRefreshKey(prev => prev + 1);
+          setRefreshKey((prev) => prev + 1);
         }
       } catch (err) {
         console.error('API error:', err);
@@ -279,23 +271,23 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           console.log('New memory received in 3D scene:', payload.new);
           // 新しいメモリを全メモリリストに追加
           const newMemory = payload.new as Memory;
-          
+
           // 新しいメモリを最新メモリリストに追加
-          setRecentMemories(prev => [...prev, newMemory]);
-          
-            setAllMemories(prev => {
-              const updated = [...prev, newMemory];
-              // 新しいランダム選択を実行（最新メモリ以外）- 件数を50に調整
-              const randomMemories = selectRandomMemories(updated, 50);
-              setDisplayedMemories(randomMemories);
-              setRefreshKey(prev => prev + 1);
-              return updated;
-            });
-          
+          setRecentMemories((prev) => [...prev, newMemory]);
+
+          setAllMemories((prev) => {
+            const updated = [...prev, newMemory];
+            // 新しいランダム選択を実行（最新メモリ以外）- 件数を50に調整
+            const randomMemories = selectRandomMemories(updated, 50);
+            setDisplayedMemories(randomMemories);
+            setRefreshKey((prev) => prev + 1);
+            return updated;
+          });
+
           // 15秒後に最新メモリを通常の位置に移動
           setTimeout(() => {
-            setRecentMemories(prev => prev.filter(memory => memory.id !== newMemory.id));
-            setRefreshKey(prev => prev + 1);
+            setRecentMemories((prev) => prev.filter((memory) => memory.id !== newMemory.id));
+            setRefreshKey((prev) => prev + 1);
           }, 15000); // 15秒 = 15000ms
         }
       )
@@ -313,7 +305,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
       if (allMemories.length > 0) {
         const randomMemories = selectRandomMemories(allMemories);
         setDisplayedMemories(randomMemories);
-        setRefreshKey(prev => prev + 1);
+        setRefreshKey((prev) => prev + 1);
       }
     }, 15000);
 
@@ -325,10 +317,10 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
   // 15秒経過した最新投稿を自動的にクリーンアップ
   useEffect(() => {
     const interval = setInterval(() => {
-      setRecentMemories(prev => {
-        const filtered = prev.filter(memory => isWithinFifteenSeconds(memory.created_at));
+      setRecentMemories((prev) => {
+        const filtered = prev.filter((memory) => isWithinFifteenSeconds(memory.created_at));
         if (filtered.length !== prev.length) {
-          setRefreshKey(prev => prev + 1);
+          setRefreshKey((prev) => prev + 1);
         }
         return filtered;
       });
@@ -345,13 +337,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
 
   if (error) {
     return (
-      <Text
-        position={[0, 0, 0]}
-        fontSize={0.8}
-        color="#ff4444"
-        anchorX="center"
-        anchorY="middle"
-      >
+      <Text position={[0, 0, 0]} fontSize={0.8} color="#ff4444" anchorX="center" anchorY="middle">
         Error: {error}
       </Text>
     );
@@ -359,13 +345,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
 
   if (displayedMemories.length === 0) {
     return (
-      <Text
-        position={[0, 0, 0]}
-        fontSize={0.8}
-        color="#888888"
-        anchorX="center"
-        anchorY="middle"
-      >
+      <Text position={[0, 0, 0]} fontSize={0.8} color="#888888" anchorX="center" anchorY="middle">
         No memories found
       </Text>
     );
@@ -375,24 +355,16 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
     <>
       {/* 環境光 */}
       <ambientLight intensity={0.3} />
-      
+
       {/* ポイントライト */}
       <pointLight position={[10, 10, 10]} intensity={1} />
       <pointLight position={[-10, -10, -10]} intensity={0.5} />
-      
+
       {/* 星空背景（白背景時は非表示） */}
       {currentTheme.backgroundColor !== '#ffffff' && (
-        <Stars 
-          radius={100} 
-          depth={50} 
-          count={5000} 
-          factor={4} 
-          saturation={0} 
-          fade 
-          speed={1}
-        />
+        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       )}
-      
+
       {/* 最新のメモリをカメラに一番近い位置に表示 */}
       {recentMemories.map((memory, index) => (
         <MemoryText
@@ -405,7 +377,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           theme={currentTheme}
         />
       ))}
-      
+
       {/* メモリテキストを3D空間に配置 */}
       {displayedMemories.map((memory: Memory, index: number) => (
         <MemoryText
@@ -416,7 +388,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           theme={currentTheme}
         />
       ))}
-      
+
       {/* 動画を3D空間にランダム配置（12個全て表示） */}
       {videoFiles.map((videoSrc, index) => (
         <VideoPlane
@@ -427,7 +399,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           scale={0.8} // サイズを小さくしてパフォーマンス向上
         />
       ))}
-      
+
       {/* カメラコントロール */}
       <OrbitControls
         enablePan={true}
@@ -450,7 +422,6 @@ export default function ThreeMemoryScene() {
 
   // 現在のテーマを取得
   const currentTheme = THEMES[currentThemeIndex];
-
 
   // ローカルストレージからテーマを復元
   useEffect(() => {
@@ -477,7 +448,6 @@ export default function ThreeMemoryScene() {
     };
   }, []);
 
-
   // モバイル動画再生のためのユーザーインタラクションハンドラー
   useEffect(() => {
     const handleUserInteraction = () => {
@@ -495,7 +465,7 @@ export default function ThreeMemoryScene() {
             console.warn('Video play after interaction failed:', error);
           }
         });
-        
+
         // カスタムイベントを発火して VideoPlane コンポーネントに通知
         const event = new CustomEvent('userInteractionDetected');
         window.dispatchEvent(event);
@@ -504,16 +474,16 @@ export default function ThreeMemoryScene() {
 
     // 様々なユーザーインタラクションイベントをリッスン
     const interactionEvents = ['touchstart', 'touchend', 'click', 'keydown', 'mousedown'];
-    
-    interactionEvents.forEach(eventType => {
-      document.addEventListener(eventType, handleUserInteraction, { 
-        once: false, 
-        passive: true 
+
+    interactionEvents.forEach((eventType) => {
+      document.addEventListener(eventType, handleUserInteraction, {
+        once: false,
+        passive: true,
       });
     });
 
     return () => {
-      interactionEvents.forEach(eventType => {
+      interactionEvents.forEach((eventType) => {
         document.removeEventListener(eventType, handleUserInteraction);
       });
     };
@@ -527,12 +497,12 @@ export default function ThreeMemoryScene() {
           position: [0, 0, 20],
           fov: 75,
           near: 0.1,
-          far: 1000
+          far: 1000,
         }}
         gl={{
           antialias: true,
           alpha: true,
-          preserveDrawingBuffer: true
+          preserveDrawingBuffer: true,
         }}
       >
         <Suspense fallback={<LoadingText progress={0} theme={currentTheme} />}>
@@ -545,7 +515,9 @@ export default function ThreeMemoryScene() {
         className="fixed bottom-2 right-2 text-xs pointer-events-none"
         style={{ color: currentTheme.textColor }}
       >
-        <p className="hidden sm:block">ドラッグ: 回転 | ホイール: ズーム | 右クリック + ドラッグ: パン</p>
+        <p className="hidden sm:block">
+          ドラッグ: 回転 | ホイール: ズーム | 右クリック + ドラッグ: パン
+        </p>
         <p className="sm:hidden">タッチ: 回転 | ピンチ: ズーム | 2本指ドラッグ: パン</p>
       </div>
     </div>

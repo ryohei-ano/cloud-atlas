@@ -12,7 +12,6 @@ interface Message {
   type: 'system' | 'user' | 'success' | 'error';
 }
 
-
 interface TerminalStreamProps {
   onClose?: () => void;
   isKeyboardOpen?: boolean;
@@ -40,14 +39,14 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
         id: '1',
         text: 'Welcome to the memory terminal...',
         timestamp: new Date().toLocaleTimeString(),
-        type: 'system'
+        type: 'system',
       },
       {
         id: '2',
         text: 'Type your memory and click 送信 to post',
         timestamp: new Date().toLocaleTimeString(),
-        type: 'system'
-      }
+        type: 'system',
+      },
     ]);
 
     // Supabase接続テスト
@@ -56,7 +55,7 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
         const { error } = await supabase
           .from('memories')
           .select('count', { count: 'exact', head: true });
-        
+
         if (error) {
           addMessage(`⚠ Supabase connection error: ${error.message}`, 'error');
         }
@@ -76,10 +75,7 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
         { event: 'INSERT', schema: 'public', table: 'memories' },
         (payload) => {
           const newMemory = payload.new as Memory;
-          addMessage(
-            `New memory posted: "${newMemory.memory}" [ID: undefined]`,
-            'system'
-          );
+          addMessage(`New memory posted: "${newMemory.memory}" [ID: undefined]`, 'system');
         }
       )
       .subscribe();
@@ -94,33 +90,128 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
       id: Date.now().toString(),
       text,
       timestamp: new Date().toLocaleTimeString(),
-      type
+      type,
     };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
   };
 
   // 不適切な内容をチェックする関数
   const validateContent = (text: string): { isValid: boolean; reason?: string } => {
     const content = text.toLowerCase().trim();
-    
+
     // 禁止単語リスト（日本語・英語）
     const prohibitedWords = [
       // 卑猥な単語
-      'セックス', 'sex', 'エッチ', 'ちんこ', 'まんこ', 'おっぱい', 'ペニス', 'ヴァギナ', 'オナニー', 'masturbation',
-      'porn', 'ポルノ', 'アダルト', 'adult', 'nude', 'ヌード', 'エロ', 'ero', 'hentai', 'ヘンタイ', 'フェラ', 'フェラチオ',
-      'フェラチオ', 'クンニ', 'cunnilingus', 'クンニリングス', 'アナル', 'anal', 'ディープキス', 'deep kiss', 'ディープキス', 'ちんぽ', 'ちんぽこ',
-      'マンコ', 'まんこ', 'おちんちん', 'おちんぽ', 'おっぱい', 'おぱい', '乳首', 'ちくび', '乳首', 'ちくび', 'バイブ', 'バイブレーター',
-      'コンドーム', 'コンドーム', '避妊具', '避妊具', '避妊', '避妊', 'セクシャル',
+      'セックス',
+      'sex',
+      'エッチ',
+      'ちんこ',
+      'まんこ',
+      'おっぱい',
+      'ペニス',
+      'ヴァギナ',
+      'オナニー',
+      'masturbation',
+      'porn',
+      'ポルノ',
+      'アダルト',
+      'adult',
+      'nude',
+      'ヌード',
+      'エロ',
+      'ero',
+      'hentai',
+      'ヘンタイ',
+      'フェラ',
+      'フェラチオ',
+      'フェラチオ',
+      'クンニ',
+      'cunnilingus',
+      'クンニリングス',
+      'アナル',
+      'anal',
+      'ディープキス',
+      'deep kiss',
+      'ディープキス',
+      'ちんぽ',
+      'ちんぽこ',
+      'マンコ',
+      'まんこ',
+      'おちんちん',
+      'おちんぽ',
+      'おっぱい',
+      'おぱい',
+      '乳首',
+      'ちくび',
+      '乳首',
+      'ちくび',
+      'バイブ',
+      'バイブレーター',
+      'コンドーム',
+      'コンドーム',
+      '避妊具',
+      '避妊具',
+      '避妊',
+      '避妊',
+      'セクシャル',
       // 誹謗中傷・差別用語
-      '死ね', 'しね', 'die', 'kill', 'キル', 'ころす', '殺す', 'アホ', 'あほ', 'stupid', 'idiot',
-      'ブス', 'ぶす', 'ugly', 'デブ', 'でぶ', 'fat', 'きもい', 'キモい', 'gross', 'disgusting',
-      'うざい', 'ウザい', 'annoying', 'クズ', 'くず', 
+      '死ね',
+      'しね',
+      'die',
+      'kill',
+      'キル',
+      'ころす',
+      '殺す',
+      'アホ',
+      'あほ',
+      'stupid',
+      'idiot',
+      'ブス',
+      'ぶす',
+      'ugly',
+      'デブ',
+      'でぶ',
+      'fat',
+      'きもい',
+      'キモい',
+      'gross',
+      'disgusting',
+      'うざい',
+      'ウザい',
+      'annoying',
+      'クズ',
+      'くず',
       // 差別用語
-      'チョン', 'ちょん', 'ガイジ', 'がいじ', 'retard', 'nigger', 'faggot', 'bitch',
+      'チョン',
+      'ちょん',
+      'ガイジ',
+      'がいじ',
+      'retard',
+      'nigger',
+      'faggot',
+      'bitch',
       // 暴力的な表現
-      '暴力', 'violence', '殴る', 'なぐる', 'punch', 'beat', 'テロ', 'terror', 'bomb', '爆弾',
+      '暴力',
+      'violence',
+      '殴る',
+      'なぐる',
+      'punch',
+      'beat',
+      'テロ',
+      'terror',
+      'bomb',
+      '爆弾',
       // その他の不適切な表現
-      'うんこ', 'ウンコ', 'shit', 'fuck', 'damn', 'hell', 'クソ', 'くそ', 'crap', 'うんち',
+      'うんこ',
+      'ウンコ',
+      'shit',
+      'fuck',
+      'damn',
+      'hell',
+      'クソ',
+      'くそ',
+      'crap',
+      'うんち',
     ];
 
     // 禁止単語チェック
@@ -151,20 +242,20 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!inputValue.trim() || isSubmitting) {
       return;
     }
 
     const memory = inputValue.trim();
-    
+
     // 内容のバリデーション
     const validation = validateContent(memory);
     if (!validation.isValid) {
       addMessage(`✗ ${validation.reason}`, 'error');
       return;
     }
-    
+
     setIsSubmitting(true);
     addMessage(`> ${memory}`, 'user');
 
@@ -191,33 +282,39 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
 
   const getMessageColorWin2k = (type: Message['type']) => {
     switch (type) {
-      case 'system': return '#000080'; // ダークブルー
-      case 'user': return '#000000'; // ブラック
-      case 'success': return '#008000'; // ダークグリーン
-      case 'error': return '#800000'; // ダークレッド
-      default: return '#000000';
+      case 'system':
+        return '#000080'; // ダークブルー
+      case 'user':
+        return '#000000'; // ブラック
+      case 'success':
+        return '#008000'; // ダークグリーン
+      case 'error':
+        return '#800000'; // ダークレッド
+      default:
+        return '#000000';
     }
   };
 
   return (
-    <div 
+    <div
       className={`w-full font-mono flex flex-col ${isKeyboardOpen ? 'h-auto' : 'h-48 sm:h-64'}`}
       style={{
         background: '#c0c0c0',
         border: '2px outset #c0c0c0',
         borderRadius: '0',
-        boxShadow: 'inset -1px -1px #808080, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #dfdfdf',
+        boxShadow:
+          'inset -1px -1px #808080, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #dfdfdf',
         minHeight: isKeyboardOpen ? '200px' : undefined,
-        maxHeight: isKeyboardOpen ? '50vh' : undefined
+        maxHeight: isKeyboardOpen ? '50vh' : undefined,
       }}
     >
       {/* タイトルバー */}
-      <div 
+      <div
         className="flex items-center justify-between px-2 py-1 text-xs sm:text-sm"
         style={{
           background: 'linear-gradient(90deg, #0a246a 0%, #a6caf0 100%)',
           color: 'white',
-          borderBottom: '1px solid #808080'
+          borderBottom: '1px solid #808080',
         }}
       >
         <span className="font-bold">青春はバグだ。｜ ポカリスエット</span>
@@ -227,48 +324,54 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
           <button
             onClick={onClose}
             className="bg-gray-400 cursor-pointer flex items-center justify-center text-black font-bold hover:bg-gray-500"
-            style={{ 
+            style={{
               border: '1px outset #c0c0c0',
               fontSize: '8px',
               lineHeight: '1',
               width: '10.5px',
               height: '10.5px',
               minWidth: '10.5px',
-              minHeight: '10.5px'
+              minHeight: '10.5px',
             }}
           >
             ×
           </button>
         </div>
       </div>
-      
+
       {/* メッセージ表示エリア */}
-      <div 
+      <div
         className="flex-1 overflow-y-auto space-y-1 p-2"
         style={{
           background: 'white',
           border: '1px inset #c0c0c0',
-          margin: '2px'
+          margin: '2px',
         }}
       >
         {messages.map((message) => (
-          <div key={message.id} className={`text-xs sm:text-sm break-words`} style={{ color: getMessageColorWin2k(message.type) }}>
+          <div
+            key={message.id}
+            className={`text-xs sm:text-sm break-words`}
+            style={{ color: getMessageColorWin2k(message.type) }}
+          >
             <span style={{ color: '#808080' }}>[{message.timestamp}]</span> {message.text}
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
-      
+
       {/* 入力エリア */}
-      <div 
+      <div
         className="p-2"
         style={{
           background: '#c0c0c0',
-          borderTop: '1px solid #808080'
+          borderTop: '1px solid #808080',
         }}
       >
         <div className="flex items-center space-x-2">
-          <span className="text-xs sm:text-sm" style={{ color: '#000000' }}>$</span>
+          <span className="text-xs sm:text-sm" style={{ color: '#000000' }}>
+            $
+          </span>
           <textarea
             ref={inputRef}
             value={inputValue}
@@ -286,7 +389,7 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
               outline: 'none',
               height: '32px', // 入力フィールドと同じ高さ
               minHeight: '32px',
-              maxHeight: '80px'
+              maxHeight: '80px',
             }}
             autoComplete="off"
             autoCorrect="off"
@@ -324,7 +427,7 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
               color: '#000000',
               borderRadius: 0,
               height: '32px',
-              minWidth: '60px'
+              minWidth: '60px',
             }}
             onMouseDown={(e) => {
               if (!isSubmitting && inputValue.trim()) {

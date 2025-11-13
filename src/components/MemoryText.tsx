@@ -12,7 +12,14 @@ interface MemoryTextProps {
   theme?: Theme;
 }
 
-export default function MemoryText({ memory, position, delay, scale = 1, isLatest = false, theme }: MemoryTextProps) {
+export default function MemoryText({
+  memory,
+  position,
+  delay,
+  scale = 1,
+  isLatest = false,
+  theme,
+}: MemoryTextProps) {
   // 作成日時を指定されたフォーマットに変更
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -29,9 +36,9 @@ export default function MemoryText({ memory, position, delay, scale = 1, isLates
 
   // テーマに応じた色を決定
   const getTextColor = () => {
-    if (isLatest) return "#00ff00"; // 最新の投稿は常に緑色
+    if (isLatest) return '#00ff00'; // 最新の投稿は常に緑色
     if (theme) return theme.textColor;
-    return "#ffffff"; // デフォルトは白
+    return '#ffffff'; // デフォルトは白
   };
 
   return (

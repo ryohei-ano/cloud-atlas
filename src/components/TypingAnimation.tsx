@@ -15,16 +15,17 @@ interface TypingAnimationProps {
 
 // ランダムな文字を生成する関数
 const generateRandomChar = (): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
   return chars[Math.floor(Math.random() * chars.length)];
 };
 
-export default function TypingAnimation({ 
-  text, 
-  position, 
-  delay = 0, 
+export default function TypingAnimation({
+  text,
+  position,
+  delay = 0,
   fontSize = 0.5,
-  color = '#ffffff'
+  color = '#ffffff',
 }: TypingAnimationProps) {
   const [displayText, setDisplayText] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -34,10 +35,13 @@ export default function TypingAnimation({
 
   // アニメーション開始（遅延を大幅短縮）
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimating(true);
-      animationStartTime.current = Date.now();
-    }, Math.min(delay, 100)); // 最大100msに制限
+    const timer = setTimeout(
+      () => {
+        setIsAnimating(true);
+        animationStartTime.current = Date.now();
+      },
+      Math.min(delay, 100)
+    ); // 最大100msに制限
 
     return () => clearTimeout(timer);
   }, [delay]);
@@ -46,7 +50,7 @@ export default function TypingAnimation({
   useEffect(() => {
     if (!isAnimating) {
       const blinkInterval = setInterval(() => {
-        setShowCursor(prev => !prev);
+        setShowCursor((prev) => !prev);
       }, 300); // 300msごとにブリンク（高速化）
 
       return () => clearInterval(blinkInterval);
@@ -67,8 +71,8 @@ export default function TypingAnimation({
       // アニメーション中：文字化けから徐々に正しい文字に
       let newDisplayText = '';
       for (let i = 0; i < text.length; i++) {
-        const charProgress = Math.max(0, (progress * text.length) - i);
-        
+        const charProgress = Math.max(0, progress * text.length - i);
+
         if (charProgress >= 1) {
           // この文字は完成
           newDisplayText += text[i];
@@ -102,7 +106,10 @@ export default function TypingAnimation({
   // 初期状態では空白を表示（静かに）
   useEffect(() => {
     if (!isAnimating && displayText === '') {
-      const emptyText = text.split('').map(() => ' ').join('');
+      const emptyText = text
+        .split('')
+        .map(() => ' ')
+        .join('');
       setDisplayText(emptyText);
     }
   }, [text, isAnimating, displayText]);
