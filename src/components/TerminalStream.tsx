@@ -317,7 +317,7 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
           borderBottom: '1px solid #808080',
         }}
       >
-        <span className="font-bold">青春はバグだ。｜ ポカリスエット</span>
+        <span className="font-bold">Cloud Atlas</span>
         <div className="flex space-x-1">
           <div className="w-3 h-3 bg-gray-400" style={{ border: '1px outset #c0c0c0' }}></div>
           <div className="w-3 h-3 bg-gray-400" style={{ border: '1px outset #c0c0c0' }}></div>

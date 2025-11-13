@@ -10,7 +10,7 @@ import { THEMES } from '@/lib/constants';
 
 export default function Page() {
   const [showTerminal, setShowTerminal] = useState(false);
-  const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
+  const [currentThemeIndex, setCurrentThemeIndex] = useState(1); // デフォルトをホワイトに設定
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -127,7 +127,7 @@ export default function Page() {
       </div>
 
       {/* ロゴ（左上） */}
-      <div className="fixed top-4 left-4 sm:absolute" style={{ zIndex: 9999 }}>
+      <div className="fixed top-6 left-6 sm:absolute" style={{ zIndex: 9999 }}>
         <button
           onClick={() => (window.location.href = '/')}
           className="block hover:opacity-80 transition-opacity duration-150 active:scale-95 cursor-pointer font-mono"
@@ -136,7 +136,7 @@ export default function Page() {
             position: 'relative',
             zIndex: 9999,
             color: currentTheme.textColor,
-            fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
+            fontSize: 'clamp(1rem, 4vw, 1.25rem)',
             fontWeight: '400',
             letterSpacing: '-0.02em',
             fontFamily: 'var(--font-geist-mono)',

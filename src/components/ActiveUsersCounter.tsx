@@ -26,9 +26,9 @@ export default function ActiveUsersCounter({ theme }: ActiveUsersCounterProps) {
         display: 'flex',
         alignItems: 'center',
         gap: '6px',
+        height: '44px',
       }}
     >
-      <span style={{ fontSize: '14px' }}>👥</span>
       <span style={{ fontWeight: 'bold' }}>{activeUserCount}</span>
       <span>online</span>
     </div>

@@ -1,7 +1,6 @@
 import type { Theme } from '@/types';
 
 export const THEMES: readonly Theme[] = [
-  { name: 'ポカリブルー', backgroundColor: '#265CAC', textColor: '#ffffff' },
   { name: '蛍光緑', backgroundColor: '#00ff00', textColor: '#000000' },
   { name: 'ホワイト', backgroundColor: '#ffffff', textColor: '#000000' },
   { name: 'ブラック', backgroundColor: '#000000', textColor: '#ffffff' },
