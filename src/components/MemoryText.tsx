@@ -1,19 +1,7 @@
 'use client';
 
 import TypingAnimation from './TypingAnimation';
-
-interface Memory {
-  id: number;
-  memory: string;
-  created_at: string;
-  memory_id: string;
-}
-
-export interface Theme {
-  name: string;
-  backgroundColor: string;
-  textColor: string;
-}
+import type { Memory, Theme } from '@/types';
 
 interface MemoryTextProps {
   memory: Memory;
@@ -36,7 +24,7 @@ export default function MemoryText({ memory, position, delay, scale = 1, isLates
     return `${year}/${month}/${day} ${hour}:${minute}`;
   };
 
-  // 指定されたフォーマットでテキストを作成（memory_idを"undefined"に固定）
+  // 指定されたフォーマットでテキストを作成（memory_idを"undefined"に統一）
   const displayText = `> undefined がログインしました\n> "${memory.memory}"\n\n[${formatDate(memory.created_at)}]`;
 
   // テーマに応じた色を決定

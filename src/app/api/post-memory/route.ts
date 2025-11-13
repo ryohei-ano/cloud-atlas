@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { ANONYMOUS_USER_ID } from '@/lib/constants';
 
 export async function POST(req: Request) {
   console.log('POST /api/post-memory - Request received');
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
     console.log('Attempting to insert into Supabase...');
     const { data, error } = await supabase
       .from('memories')
-      .insert([{ memory, memory_id: "undefined" }])
+      .insert([{ memory, memory_id: ANONYMOUS_USER_ID }])
       .select();
 
     if (error) {

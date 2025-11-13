@@ -9,13 +9,11 @@ interface DraggableThemeButtonProps {
     textColor: string;
   };
   onThemeSwitch: () => void;
-  isScreenshotMode: boolean;
 }
 
-export default function DraggableThemeButton({ 
-  currentTheme, 
-  onThemeSwitch, 
-  isScreenshotMode 
+export default function DraggableThemeButton({
+  currentTheme,
+  onThemeSwitch
 }: DraggableThemeButtonProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -250,7 +248,7 @@ export default function DraggableThemeButton({
     return () => window.removeEventListener('resize', handleResize);
   }, [position]);
 
-  if (isScreenshotMode || !isInitialized) {
+  if (!isInitialized) {
     return null;
   }
 

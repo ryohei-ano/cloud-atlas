@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
+import { ANONYMOUS_USER_ID } from '@/lib/constants';
+import type { Memory } from '@/types';
 
 interface Message {
   id: string;
@@ -10,12 +12,6 @@ interface Message {
   type: 'system' | 'user' | 'success' | 'error';
 }
 
-interface Memory {
-  id: number;
-  memory: string;
-  created_at: string;
-  memory_id: string;
-}
 
 interface TerminalStreamProps {
   onClose?: () => void;
@@ -176,12 +172,12 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
       // 直接Supabaseに保存（高速化）
       const { error } = await supabase
         .from('memories')
-        .insert([{ memory, memory_id: "undefined" }]);
+        .insert([{ memory, memory_id: ANONYMOUS_USER_ID }]);
 
       if (error) {
         addMessage(`✗ Error: ${error.message}`, 'error');
       } else {
-        addMessage(`✓ Posted [ID: undefined]`, 'success');
+        addMessage(`✓ Posted [ID: ${ANONYMOUS_USER_ID}]`, 'success');
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
