@@ -24,7 +24,7 @@ const ALLOWED_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:3001',
   // 本番環境のドメインを追加
-  // 'https://your-production-domain.com',
+  'https://cloud-atlas-space.vercel.app',
 ];
 
 export function middleware(request: NextRequest) {
