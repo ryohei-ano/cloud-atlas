@@ -8,6 +8,7 @@ import MemoryText from './MemoryText';
 import VideoPlane from './VideoPlane';
 import { THEMES } from '@/lib/constants';
 import type { Memory, Theme } from '@/types';
+import { devLog } from '@/lib/devLogger';
 
 // 大量のテキストが重ならないように3D座標を生成する関数
 const generateRandomPosition = (index: number): [number, number, number] => {
@@ -236,7 +237,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           setRefreshKey((prev) => prev + 1);
         }
       } catch (err) {
-        console.error('API error:', err);
+        devLog.error('API error:', err);
         if (isMounted) {
           setError('Failed to load memories');
         }
@@ -268,7 +269,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'memories' },
         (payload) => {
-          console.log('New memory received in 3D scene:', payload.new);
+          devLog.log('New memory received in 3D scene:', payload.new);
           // 新しいメモリを全メモリリストに追加
           const newMemory = payload.new as Memory;
 
@@ -459,10 +460,10 @@ export default function ThreeMemoryScene() {
           try {
             if (video.paused) {
               await video.play();
-              console.log('Video started after user interaction');
+              devLog.log('Video started after user interaction');
             }
           } catch (error) {
-            console.warn('Video play after interaction failed:', error);
+            devLog.warn('Video play after interaction failed:', error);
           }
         });
 

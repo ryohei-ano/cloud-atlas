@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { logError } from '@/lib/errorHandler';
 
 export async function GET() {
   const { data, error } = await supabase
@@ -9,7 +10,11 @@ export async function GET() {
     .limit(100);
 
   if (error) {
-    console.error(error);
+    logError(error, {
+      endpoint: '/api/get-memories',
+      method: 'GET',
+      message: 'Failed to fetch memories from database',
+    });
     return NextResponse.json({ error: 'Fetch error' }, { status: 500 });
   }
 

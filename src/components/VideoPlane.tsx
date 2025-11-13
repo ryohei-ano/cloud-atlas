@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { devLog } from '@/lib/devLogger';
 
 interface VideoPlaneProps {
   videoSrc: string;
@@ -47,7 +48,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
 
     // エラーハンドリング
     const handleError = (error: Event) => {
-      console.error('Video loading error for', videoSrc, ':', error);
+      devLog.error('Video loading error for', videoSrc, ':', error);
     };
 
     // 動画が読み込まれたらテクスチャを作成
@@ -67,7 +68,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
           setVideoTexture(texture);
           setIsLoaded(true);
           textureCreated = true;
-          console.log(
+          devLog.log(
             'Video texture created for:',
             videoSrc,
             'Size:',
@@ -76,10 +77,10 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
             video.videoHeight
           );
         } else {
-          console.log('Video not ready yet, waiting...', videoSrc);
+          devLog.log('Video not ready yet, waiting...', videoSrc);
         }
       } catch (error) {
-        console.error('Video texture creation failed:', error);
+        devLog.error('Video texture creation failed:', error);
       }
     };
 
@@ -96,7 +97,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
 
           if (playPromise !== undefined) {
             await playPromise;
-            console.log('Video playing successfully:', videoSrc);
+            devLog.log('Video playing successfully:', videoSrc);
 
             // 再生開始後にテクスチャを作成（黒い画面を避ける）
             if (!textureCreated && video.videoWidth > 0 && video.videoHeight > 0) {
@@ -105,13 +106,13 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
           }
         }
       } catch (error) {
-        console.warn('Video autoplay failed for', videoSrc, ':', error);
+        devLog.warn('Video autoplay failed for', videoSrc, ':', error);
         playAttempted = false; // 再試行を許可
       }
     };
 
     const handleCanPlay = () => {
-      console.log('Video can play:', videoSrc);
+      devLog.log('Video can play:', videoSrc);
       // 少し遅延してから再生を試行（黒い画面を避ける）
       setTimeout(() => {
         tryPlay();
@@ -119,14 +120,14 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     };
 
     const handleLoadedMetadata = () => {
-      console.log('Video metadata loaded:', videoSrc);
+      devLog.log('Video metadata loaded:', videoSrc);
       // メタデータ読み込み後は即座に試行
       tryPlay();
     };
 
     // 動画が実際に再生開始されたときのハンドラー
     const handlePlaying = () => {
-      console.log('Video actually playing:', videoSrc);
+      devLog.log('Video actually playing:', videoSrc);
       // 再生開始後にテクスチャを作成
       if (!textureCreated && video.videoWidth > 0 && video.videoHeight > 0) {
         setTimeout(() => {
@@ -140,10 +141,10 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
       try {
         if (video.paused) {
           await video.play();
-          console.log('Video started after user interaction:', videoSrc);
+          devLog.log('Video started after user interaction:', videoSrc);
         }
       } catch (error) {
-        console.warn('Video play after interaction failed:', error);
+        devLog.warn('Video play after interaction failed:', error);
       }
     };
 
@@ -154,7 +155,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     video.addEventListener('canplaythrough', tryPlay);
     video.addEventListener('playing', handlePlaying); // 実際の再生開始時
     video.addEventListener('error', handleError);
-    video.addEventListener('loadstart', () => console.log('Video load started:', videoSrc));
+    video.addEventListener('loadstart', () => devLog.log('Video load started:', videoSrc));
 
     // グローバルなユーザーインタラクションリスナー
     const interactionEvents = ['touchstart', 'touchend', 'click', 'keydown'];

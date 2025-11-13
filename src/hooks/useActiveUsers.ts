@@ -22,11 +22,11 @@ export const useActiveUsers = () => {
         const count = Object.keys(state).length;
         setActiveUserCount(count);
       })
-      .on('presence', { event: 'join' }, ({ newPresences }) => {
-        console.log('User joined:', newPresences);
+      .on('presence', { event: 'join' }, () => {
+        // ユーザー情報はログに出力しない（プライバシー保護）
       })
-      .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-        console.log('User left:', leftPresences);
+      .on('presence', { event: 'leave' }, () => {
+        // ユーザー情報はログに出力しない（プライバシー保護）
       })
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {

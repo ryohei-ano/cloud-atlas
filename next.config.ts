@@ -11,11 +11,13 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Three.js等で必要
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:", // Three.js等で必要
+              "worker-src 'self' blob:", // Three.js Worker用
+              "child-src 'self' blob:", // Three.js Worker用
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net",
               "media-src 'self' blob:",
               "frame-ancestors 'none'",
               "base-uri 'self'",

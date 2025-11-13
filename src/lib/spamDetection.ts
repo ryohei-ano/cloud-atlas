@@ -13,8 +13,8 @@ interface SpamScore {
   isSpam: boolean;
 }
 
-// スパムスコアの閾値
-const SPAM_THRESHOLD = 50;
+// スパムスコアの閾値（より厳格に）
+const SPAM_THRESHOLD = 35;
 
 /**
  * スパム検出メイン関数
@@ -24,10 +24,18 @@ export function detectSpam(memory: string): SpamScore {
   const reasons: string[] = [];
 
   // 1. 同じ文字の連続
-  const repeatedChars = memory.match(/(.)\1{5,}/g);
+  const repeatedChars = memory.match(/(.)\1{4,}/g);
   if (repeatedChars) {
-    score += repeatedChars.length * 10;
+    score += repeatedChars.length * 15;
     reasons.push('Repeated characters detected');
+  }
+
+  // 1.5. 同じ単語やパターンの繰り返し（例: "SPAMSPAMSPAM", "testTESTtest"）
+  const wordPattern = /(\w{3,})\1{2,}/gi;
+  const repeatedWords = memory.match(wordPattern);
+  if (repeatedWords) {
+    score += repeatedWords.length * 30;
+    reasons.push('Repeated word patterns detected');
   }
 
   // 2. 大文字の割合
@@ -45,12 +53,24 @@ export function detectSpam(memory: string): SpamScore {
     reasons.push('Too many special characters');
   }
 
-  // 4. URLの数
+  // 4. URLの数とコンテキスト
   const urls = memory.match(/https?:\/\/[^\s]+/g);
   if (urls) {
+    // URLが1つでもスコア加算（正当な投稿でもURLを含むことはあるが、低スコア）
+    score += urls.length * 10;
+    reasons.push(`${urls.length} URL(s) detected`);
+
+    // 短いテキスト+URLの組み合わせは高リスク
+    const textWithoutUrls = memory.replace(/https?:\/\/[^\s]+/g, '').trim();
+    if (textWithoutUrls.length < 30 && urls.length >= 1) {
+      score += 20;
+      reasons.push('Short text with URL (high risk)');
+    }
+
+    // 複数URLは非常に怪しい
     if (urls.length > 2) {
-      score += urls.length * 10;
-      reasons.push('Multiple URLs detected');
+      score += urls.length * 15;
+      reasons.push('Multiple URLs (very suspicious)');
     }
   }
 
@@ -67,8 +87,9 @@ export function detectSpam(memory: string): SpamScore {
     reasons.push('Excessive emojis');
   }
 
-  // 7. 既知のスパムワード
+  // 7. 既知のスパムワード（大幅拡充）
   const spamWords = [
+    // 英語スパムワード
     'buy now',
     'click here',
     'free money',
@@ -76,14 +97,56 @@ export function detectSpam(memory: string): SpamScore {
     'earn money fast',
     'work from home',
     'guaranteed income',
+    'make money',
+    'get paid',
+    'cheap',
+    'discount',
+    'prize',
+    'winner',
+    'congratulations',
+    'claim now',
+    'act now',
+    'limited time',
+    'urgent',
+    'casino',
+    'viagra',
+    'pills',
+    'weight loss',
+    'dating',
+    'singles',
+    'meet girls',
+    'sex',
+    'porn',
+    'xxx',
+    'adult',
+    // 日本語スパムワード
     '今すぐ購入',
     'クリックして',
     '無料でお金',
     '限定オファー',
+    '副業',
+    '出会い系',
+    '稼げる',
+    '高収入',
+    '在宅ワーク',
+    '簡単に稼げる',
+    '即金',
+    'お金が欲しい',
+    '無料',
+    '激安',
+    '特価',
+    '当選',
+    'おめでとう',
+    'ギャンブル',
+    'カジノ',
+    'パチンコ',
+    '出会い',
+    'セフレ',
+    'アダルト',
   ];
   const lowerMemory = memory.toLowerCase();
   for (const word of spamWords) {
-    if (lowerMemory.includes(word)) {
+    if (lowerMemory.includes(word.toLowerCase())) {
       score += 30;
       reasons.push(`Spam word detected: ${word}`);
     }

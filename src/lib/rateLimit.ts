@@ -141,7 +141,7 @@ const blockedIps = new Set<string>();
  */
 export function blockIp(ip: string): void {
   blockedIps.add(ip);
-  console.log(`IP blocked: ${ip}`);
+  // IPアドレスはログに出力しない（プライバシー保護）
 }
 
 /**
@@ -149,7 +149,7 @@ export function blockIp(ip: string): void {
  */
 export function unblockIp(ip: string): void {
   blockedIps.delete(ip);
-  console.log(`IP unblocked: ${ip}`);
+  // IPアドレスはログに出力しない（プライバシー保護）
 }
 
 /**
