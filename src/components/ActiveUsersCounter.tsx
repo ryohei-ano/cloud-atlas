@@ -20,7 +20,7 @@ export default function ActiveUsersCounter({ theme }: ActiveUsersCounterProps) {
         padding: '4px 8px',
         fontSize: '12px',
         fontFamily: 'monospace',
-        color: theme.textColor,
+        color: '#000000',
         boxShadow:
           'inset 1px 1px 0px rgba(255, 255, 255, 0.8), inset -1px -1px 0px rgba(0, 0, 0, 0.3)',
         display: 'flex',
