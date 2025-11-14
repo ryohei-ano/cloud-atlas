@@ -19,3 +19,12 @@ export interface ValidationResult {
 export interface PresenceState {
   online_at: string;
 }
+
+export interface GlbModelProps {
+  modelSrc: string;
+  position: [number, number, number];
+  delay: number;
+  scale?: number;
+  rotation?: [number, number, number];
+  brightness?: number;
+}

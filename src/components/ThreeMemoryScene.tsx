@@ -6,6 +6,7 @@ import { OrbitControls, Stars, Text } from '@react-three/drei';
 import { supabase } from '@/lib/supabase';
 import MemoryText from './MemoryText';
 import VideoPlane from './VideoPlane';
+import GlbModel from './GlbModel';
 import { THEMES } from '@/lib/constants';
 import type { Memory, Theme } from '@/types';
 import { devLog } from '@/lib/devLogger';
@@ -159,6 +160,12 @@ const videoFiles = [
   '/video/10.mp4',
   '/video/11.mp4',
   '/video/12.mp4',
+];
+
+const glbFiles = [
+  '/objects/01.glb',
+  '/objects/02.glb',
+  '/objects/03.glb',
 ];
 
 // シーンの内容
@@ -398,6 +405,18 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           position={generateVideoPosition(index)}
           delay={index * 300} // 0.3秒ずつ段階的に表示
           scale={0.8} // サイズを小さくしてパフォーマンス向上
+        />
+      ))}
+
+      {/* GLBモデルを3D空間にランダム配置 */}
+      {glbFiles.map((modelSrc, index) => (
+        <GlbModel
+          key={`glb-${index}`}
+          modelSrc={modelSrc}
+          position={generateVideoPosition(videoFiles.length + index)}
+          delay={index * 500} // 0.5秒ずつ段階的に表示
+          scale={1.0} // 統一サイズ
+          brightness={8.0} // 明るさを3.0倍に調整
         />
       ))}
 

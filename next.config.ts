@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net",
+              "connect-src 'self' blob: https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net",
               "media-src 'self' blob:",
               "frame-ancestors 'none'",
               "base-uri 'self'",

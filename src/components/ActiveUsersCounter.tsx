@@ -12,13 +12,13 @@ export default function ActiveUsersCounter({ theme }: ActiveUsersCounterProps) {
 
   return (
     <div
-      className="fixed top-4 right-20 sm:right-24"
+      className="fixed top-4 right-16 sm:right-18"
       style={{
         zIndex: 9999,
         background: '#c0c0c0',
         border: '2px outset #c0c0c0',
         padding: '4px 8px',
-        fontSize: '12px',
+        fontSize: '13px',
         fontFamily: 'monospace',
         color: '#000000',
         boxShadow:
