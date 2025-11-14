@@ -12,7 +12,7 @@ export default function ActiveUsersCounter({ theme }: ActiveUsersCounterProps) {
 
   return (
     <div
-      className="fixed top-4 right-16 sm:right-18"
+      className="fixed top-4 right-18 sm:right-18"
       style={{
         zIndex: 9999,
         background: '#c0c0c0',

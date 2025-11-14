@@ -64,7 +64,7 @@ export default function DraggableThemeButton({
     return { x: newX, y: newY };
   }, []);
 
-  // 初期位置を設定（画面右側中央）
+  // 初期位置を設定（画面右端にスナップ）
   useEffect(() => {
     if (!isInitialized) {
       const buttonSize = 40;
@@ -74,6 +74,8 @@ export default function DraggableThemeButton({
 
       // ローカルストレージから保存された位置を復元
       const savedPosition = localStorage.getItem('themeButtonPosition');
+      let targetPosition = { x: initialX, y: initialY };
+
       if (savedPosition) {
         try {
           const parsed = JSON.parse(savedPosition);
@@ -84,19 +86,19 @@ export default function DraggableThemeButton({
             parsed.y >= 0 &&
             parsed.y <= window.innerHeight - buttonSize
           ) {
-            setPosition(parsed);
-          } else {
-            setPosition({ x: initialX, y: initialY });
+            targetPosition = parsed;
           }
         } catch {
-          setPosition({ x: initialX, y: initialY });
+          // パースエラー時はデフォルト位置を使用
         }
-      } else {
-        setPosition({ x: initialX, y: initialY });
       }
+
+      // 必ず画面の端にスナップ
+      const snappedPosition = snapToEdge(targetPosition.x, targetPosition.y);
+      setPosition(snappedPosition);
       setIsInitialized(true);
     }
-  }, [isInitialized]);
+  }, [isInitialized, snapToEdge]);
 
   // ドラッグ開始
   const handleMouseDown = useCallback((e: React.MouseEvent) => {

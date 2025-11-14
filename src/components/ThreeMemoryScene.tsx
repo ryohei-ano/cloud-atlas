@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense, useRef } from 'react';
+import { useState, useEffect, Suspense, useRef, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Text } from '@react-three/drei';
 import { supabase } from '@/lib/supabase';
@@ -146,6 +146,41 @@ const generateVideoPosition = (index: number): [number, number, number] => {
   return [x + offsetX, adjustedY + offsetY, adjustedZ + offsetZ];
 };
 
+// GLBモデル専用の配置関数（完全ランダム、ページ更新時に毎回変わる）
+const generateGlbPosition = (): [number, number, number] => {
+  // より散らばった配置のためのランダム値
+  const itemsPerLayer = 4;
+  const currentLayer = Math.floor(Math.random() * 3); // 0-2のランダムな層
+  const indexInLayer = Math.floor(Math.random() * itemsPerLayer);
+
+  // さらに広い範囲に配置
+  const baseRadius = 4 + currentLayer * 6 + Math.random() * 4; // ランダムな半径
+
+  // フィボナッチ螺旋を使用して均等分布
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // 黄金角
+  const theta = indexInLayer * goldenAngle + Math.random() * Math.PI; // ランダム要素追加
+  const phi = Math.acos(1 - (2 * (indexInLayer + 0.5)) / itemsPerLayer);
+
+  // 球面座標から直交座標への変換
+  const x = baseRadius * Math.sin(phi) * Math.cos(theta);
+  const y = baseRadius * Math.cos(phi);
+  const z = baseRadius * Math.sin(phi) * Math.sin(theta);
+
+  // Y座標を調整（さらに縦方向に散らばらせる）
+  const adjustedY = y * 0.6 + (Math.random() - 0.5) * 8;
+
+  // Z座標を調整（前後にさらに散らばらせる）
+  const adjustedZ = z * 1.0 + (Math.random() - 0.5) * 10;
+
+  // 追加のランダム性を増加
+  const randomOffset = 3.0;
+  const offsetX = (Math.random() - 0.5) * randomOffset;
+  const offsetY = (Math.random() - 0.5) * randomOffset;
+  const offsetZ = (Math.random() - 0.5) * randomOffset;
+
+  return [x + offsetX, adjustedY + offsetY, adjustedZ + offsetZ];
+};
+
 // 動画ファイルのリスト
 const videoFiles = [
   '/video/01.mp4',
@@ -177,6 +212,12 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // GLBモデルの位置をページロード時に一度だけランダムに生成
+  const glbPositions = useMemo(
+    () => glbFiles.map(() => generateGlbPosition()),
+    [] // 空の依存配列でページロード時のみ実行
+  );
 
   // 15秒以内かどうかを判定する関数
   const isWithinFifteenSeconds = (createdAt: string) => {
@@ -408,12 +449,12 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
         />
       ))}
 
-      {/* GLBモデルを3D空間にランダム配置 */}
+      {/* GLBモデルを3D空間にランダム配置（ページ更新時に毎回位置が変わる） */}
       {glbFiles.map((modelSrc, index) => (
         <GlbModel
           key={`glb-${index}`}
           modelSrc={modelSrc}
-          position={generateVideoPosition(videoFiles.length + index)}
+          position={glbPositions[index]}
           delay={index * 500} // 0.5秒ずつ段階的に表示
           scale={1.0} // 統一サイズ
           brightness={8.0} // 明るさを3.0倍に調整

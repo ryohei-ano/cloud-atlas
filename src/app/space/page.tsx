@@ -10,7 +10,7 @@ import { THEMES } from '@/lib/constants';
 
 export default function Page() {
   const [showTerminal, setShowTerminal] = useState(false);
-  const [currentThemeIndex, setCurrentThemeIndex] = useState(1); // デフォルトをホワイトに設定
+  const [currentThemeIndex, setCurrentThemeIndex] = useState(0); // デフォルトをホワイトに設定（THEMES[0]）
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -89,6 +89,12 @@ export default function Page() {
       document.documentElement.classList.remove('no-scroll');
     };
   }, [showTerminal]);
+
+  // テーマ変更時にhtml/bodyの背景色を更新
+  useEffect(() => {
+    document.documentElement.style.backgroundColor = currentTheme.backgroundColor;
+    document.body.style.backgroundColor = currentTheme.backgroundColor;
+  }, [currentTheme.backgroundColor]);
 
   // テーマ切り替え機能
   const switchTheme = () => {

@@ -115,8 +115,10 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
     @apply bg-background text-foreground;
+    background-color: #ffffff; /* デフォルトを白に設定してページロード時のフラッシュを防止 */
   }
 }
 

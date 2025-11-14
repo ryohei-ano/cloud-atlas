@@ -10,7 +10,8 @@
       "mcp__supabase__list_organizations",
       "Bash(curl:*)",
       "Bash(lsof:*)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "mcp__serena__find_file"
     ],
     "deny": [],
     "ask": []
