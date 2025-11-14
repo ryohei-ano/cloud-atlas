@@ -36,7 +36,7 @@ export default function MemoryText({
 
   // テーマに応じた色を決定
   const getTextColor = () => {
-    if (isLatest) return '#00ff00'; // 最新の投稿は常に緑色
+    if (isLatest) return '#39ff14'; // 最新の投稿は鮮やかなネオングリーン
     if (theme) return theme.textColor;
     return '#ffffff'; // デフォルトは白
   };

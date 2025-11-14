@@ -437,8 +437,8 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           key={`video-${index}`}
           videoSrc={videoSrc}
           position={generateVideoPosition(index)}
-          delay={index * 300} // 0.3秒ずつ段階的に表示
-          scale={0.5} // サイズを小さく表示
+          delay={index * 200} // 0.3秒ずつ段階的に表示
+          scale={0.4} // さらに小さく表示
         />
       ))}
 
