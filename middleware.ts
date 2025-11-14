@@ -31,7 +31,6 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const origin = request.headers.get('origin');
 
-
   // APIルートのみセキュリティ保護を適用
   if (pathname.startsWith('/api/')) {
     // ===== IPブロックチェック =====

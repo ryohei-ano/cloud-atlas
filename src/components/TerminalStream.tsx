@@ -4,7 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ANONYMOUS_USER_ID } from '@/lib/constants';
 import type { Memory } from '@/types';
-import { trackMemoryPost, trackError, trackTerminalAction, trackRateLimitHit } from '@/lib/analytics';
+import {
+  trackMemoryPost,
+  trackError,
+  trackTerminalAction,
+  trackRateLimitHit,
+} from '@/lib/analytics';
 
 interface Message {
   id: string;

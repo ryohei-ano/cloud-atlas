@@ -90,28 +90,31 @@ NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX  # ← ここに測定IDを貼り付け
 
 以下のイベントが自動的に送信されます:
 
-| イベント名 | 説明 | パラメータ |
-|-----------|------|-----------|
-| `memory_posted` | メモリーが投稿された | `value`: 文字数 |
-| `memories_fetched` | メモリーを取得 | `value`: 取得数 |
-| `rate_limit_hit` | Rate limitに到達 | `endpoint`, `value`: retryAfter |
-| `error_occurred` | エラー発生 | `error_message`, `event_label` |
-| `spam_detected` | スパム検出 | `spam_reason` |
-| `terminal_action` | ターミナル操作 | `event_label`: open/close/submit |
+| イベント名         | 説明                 | パラメータ                       |
+| ------------------ | -------------------- | -------------------------------- |
+| `memory_posted`    | メモリーが投稿された | `value`: 文字数                  |
+| `memories_fetched` | メモリーを取得       | `value`: 取得数                  |
+| `rate_limit_hit`   | Rate limitに到達     | `endpoint`, `value`: retryAfter  |
+| `error_occurred`   | エラー発生           | `error_message`, `event_label`   |
+| `spam_detected`    | スパム検出           | `spam_reason`                    |
+| `terminal_action`  | ターミナル操作       | `event_label`: open/close/submit |
 
 ## 📈 レポートの見方
 
 ### 主要なレポート
 
 #### 1. リアルタイムレポート
+
 - **場所**: レポート → リアルタイム
 - **用途**: 現在のアクセス状況をリアルタイムで確認
 
 #### 2. エンゲージメント概要
+
 - **場所**: レポート → エンゲージメント → 概要
 - **用途**: ページビュー、イベント数、セッション時間を確認
 
 #### 3. イベント
+
 - **場所**: レポート → エンゲージメント → イベント
 - **用途**: カスタムイベントの発生回数を確認
 - **見るべき指標**:
@@ -120,6 +123,7 @@ NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX  # ← ここに測定IDを貼り付け
   - `error_occurred`: エラー発生数（多い場合は要調査）
 
 #### 4. ユーザー属性
+
 - **場所**: レポート → ユーザー → ユーザー属性
 - **用途**: 訪問者の地域、デバイス、ブラウザを確認
 
@@ -153,16 +157,19 @@ NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX  # ← ここに測定IDを貼り付け
 ### データが表示されない
 
 **原因1**: 環境変数が設定されていない
+
 ```bash
 # .env.localを確認
 cat .env.local | grep NEXT_PUBLIC_GA_ID
 ```
 
 **原因2**: 本番環境でのみ有効
+
 - 開発環境（localhost）ではGA4は無効
 - Vercelの本番環境でのみ動作
 
 **原因3**: 測定IDが間違っている
+
 - `G-XXXXXXXXXX`形式になっているか確認
 - ダッシュボードから再度コピー
 
@@ -200,6 +207,6 @@ cat .env.local | grep NEXT_PUBLIC_GA_ID
 
 ## 📝 変更履歴
 
-| 日付 | 変更内容 |
-|------|----------|
+| 日付       | 変更内容     |
+| ---------- | ------------ |
 | 2025-11-14 | 初期実装完了 |

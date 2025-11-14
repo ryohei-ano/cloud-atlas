@@ -22,11 +22,15 @@ export default function GlbModel({
   const [isVisible, setIsVisible] = useState(false);
 
   // ランダムな初期回転角度を生成（X, Y, Z軸全てランダム）
-  const randomInitialRotation = useMemo(() => [
-    (Math.random() - 0.5) * Math.PI * 0.5, // X軸: -45度〜+45度の範囲で傾ける
-    Math.random() * Math.PI * 2, // Y軸: 0〜360度
-    (Math.random() - 0.5) * Math.PI * 0.5, // Z軸: -45度〜+45度の範囲で傾ける
-  ] as [number, number, number], []);
+  const randomInitialRotation = useMemo(
+    () =>
+      [
+        (Math.random() - 0.5) * Math.PI * 0.5, // X軸: -45度〜+45度の範囲で傾ける
+        Math.random() * Math.PI * 2, // Y軸: 0〜360度
+        (Math.random() - 0.5) * Math.PI * 0.5, // Z軸: -45度〜+45度の範囲で傾ける
+      ] as [number, number, number],
+    []
+  );
 
   // GLBモデルを読み込み
   const { scene } = useGLTF(modelSrc);
@@ -74,7 +78,11 @@ export default function GlbModel({
             // 配列の場合：各マテリアルをクローンして明るさを適用
             mesh.material = mesh.material.map((mat) => {
               const clonedMat = mat.clone();
-              if ('color' in clonedMat && clonedMat.color instanceof THREE.Color && originalColors[colorIndex]) {
+              if (
+                'color' in clonedMat &&
+                clonedMat.color instanceof THREE.Color &&
+                originalColors[colorIndex]
+              ) {
                 // 元の色から明るさを計算（累積を防ぐ）
                 const orig = originalColors[colorIndex];
                 clonedMat.color.setRGB(
@@ -89,14 +97,14 @@ export default function GlbModel({
           } else {
             // 単一マテリアルの場合
             const clonedMat = mesh.material.clone();
-            if ('color' in clonedMat && clonedMat.color instanceof THREE.Color && originalColors[colorIndex]) {
+            if (
+              'color' in clonedMat &&
+              clonedMat.color instanceof THREE.Color &&
+              originalColors[colorIndex]
+            ) {
               // 元の色から明るさを計算（累積を防ぐ）
               const orig = originalColors[colorIndex];
-              clonedMat.color.setRGB(
-                orig.r * brightness,
-                orig.g * brightness,
-                orig.b * brightness
-              );
+              clonedMat.color.setRGB(orig.r * brightness, orig.g * brightness, orig.b * brightness);
             }
             mesh.material = clonedMat;
             colorIndex++;

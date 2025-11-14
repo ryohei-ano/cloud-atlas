@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useRef, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars, Text } from '@react-three/drei';
+import { OrbitControls, Text } from '@react-three/drei';
 import { supabase } from '@/lib/supabase';
 import MemoryText from './MemoryText';
 import VideoPlane from './VideoPlane';
@@ -198,6 +198,7 @@ const glbFiles = [
   '/objects/01.glb',
   '/objects/02.glb',
   '/objects/03.glb',
+  '/objects/07.glb',
 ];
 
 // シーンの内容
@@ -406,11 +407,6 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
       <pointLight position={[10, 10, 10]} intensity={1} />
       <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
-      {/* 星空背景（白背景時は非表示） */}
-      {currentTheme.backgroundColor !== '#ffffff' && (
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      )}
-
       {/* 最新のメモリをカメラに一番近い位置に表示 */}
       {recentMemories.map((memory, index) => (
         <MemoryText
@@ -442,7 +438,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           videoSrc={videoSrc}
           position={generateVideoPosition(index)}
           delay={index * 300} // 0.3秒ずつ段階的に表示
-          scale={0.8} // サイズを小さくしてパフォーマンス向上
+          scale={0.5} // サイズを小さく表示
         />
       ))}
 
@@ -453,7 +449,7 @@ function SceneContent({ currentTheme }: { currentTheme: Theme }) {
           modelSrc={modelSrc}
           position={glbPositions[index]}
           delay={index * 500} // 0.5秒ずつ段階的に表示
-          scale={1.0} // 統一サイズ
+          scale={modelSrc.includes('07.glb') ? 3.0 : 1.0} // 07.glbのみ大きく表示
           brightness={8.0} // 明るさを3.0倍に調整
         />
       ))}
