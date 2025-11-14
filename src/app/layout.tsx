@@ -22,7 +22,7 @@ const dotGothic = DotGothic16({
 export const metadata: Metadata = {
   title: 'Cloud Atlas',
   description:
-    'A collective memory space where thoughts float in 3D. Share your memories in the cloud.',
+    'A liminal space of the internett.',
   keywords: 'Cloud Atlas,memory,3D,space,thoughts,collective',
   authors: [{ name: 'Cloud Atlas' }],
   creator: 'Cloud Atlas',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Cloud Atlas',
     description:
-      'A collective memory space where thoughts float in 3D. Share your memories in the cloud.',
+      'A liminal space of the internett.',
     url: 'https://cloud-atlas.vercel.app',
     siteName: 'Cloud Atlas',
     locale: 'en_US',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Cloud Atlas',
     description:
-      'A collective memory space where thoughts float in 3D. Share your memories in the cloud.',
+      'A liminal space of the internett.',
   },
   robots: {
     index: true,
