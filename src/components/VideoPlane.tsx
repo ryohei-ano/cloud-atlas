@@ -18,6 +18,7 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
   const [videoTexture, setVideoTexture] = useState<THREE.VideoTexture | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState<number>(16 / 9); // デフォルトは16:9
 
   useEffect(() => {
     // 動画要素を事前に作成して読み込み開始
@@ -68,13 +69,20 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
           setVideoTexture(texture);
           setIsLoaded(true);
           textureCreated = true;
+
+          // 動画の実際のアスペクト比を計算して保存
+          const ratio = video.videoWidth / video.videoHeight;
+          setAspectRatio(ratio);
+
           devLog.log(
             'Video texture created for:',
             videoSrc,
             'Size:',
             video.videoWidth,
             'x',
-            video.videoHeight
+            video.videoHeight,
+            'Aspect ratio:',
+            ratio.toFixed(2)
           );
         } else {
           devLog.log('Video not ready yet, waiting...', videoSrc);
@@ -236,9 +244,34 @@ export default function VideoPlane({ videoSrc, position, delay, scale = 1 }: Vid
     return null;
   }
 
-  // 動画のアスペクト比を維持（16:9を想定）
-  const width = 3 * scale; // サイズを少し小さくしてパフォーマンス向上
-  const height = 1.69 * scale; // 16:9比率
+  // 16:9のアスペクト比に固定
+  const targetAspectRatio = 16 / 9;
+  const baseHeight = 3 * scale; // 基準の高さ
+  const width = baseHeight * targetAspectRatio; // 16:9の幅
+  const height = baseHeight;
+
+  // coverのようにクロップするためのUVマッピング調整
+  let uvScaleX = 1;
+  let uvScaleY = 1;
+  let uvOffsetX = 0;
+  let uvOffsetY = 0;
+
+  if (aspectRatio > targetAspectRatio) {
+    // 動画が横長の場合：上下をフルに使い、左右をクロップ
+    uvScaleX = targetAspectRatio / aspectRatio;
+    uvOffsetX = (1 - uvScaleX) / 2;
+  } else {
+    // 動画が縦長の場合：左右をフルに使い、上下をクロップ
+    uvScaleY = aspectRatio / targetAspectRatio;
+    uvOffsetY = (1 - uvScaleY) / 2;
+  }
+
+  // テクスチャのUVマッピングを調整
+  if (videoTexture) {
+    videoTexture.repeat.set(uvScaleX, uvScaleY);
+    videoTexture.offset.set(uvOffsetX, uvOffsetY);
+    videoTexture.needsUpdate = true;
+  }
 
   return (
     <mesh ref={meshRef} position={position}>

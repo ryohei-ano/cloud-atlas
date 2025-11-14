@@ -181,20 +181,17 @@ const generateGlbPosition = (): [number, number, number] => {
   return [x + offsetX, adjustedY + offsetY, adjustedZ + offsetZ];
 };
 
-// 動画ファイルのリスト
+// 動画ファイルのリスト（.movファイル）
 const videoFiles = [
-  '/video/01.mp4',
-  '/video/02.mp4',
-  '/video/03.mp4',
-  '/video/04.mp4',
-  '/video/05.mp4',
-  '/video/06.mp4',
-  '/video/07.mp4',
-  '/video/08.mp4',
-  '/video/09.mp4',
-  '/video/10.mp4',
-  '/video/11.mp4',
-  '/video/12.mp4',
+  '/video/01.mov',
+  '/video/02.mov',
+  '/video/03.mov',
+  '/video/04.mov',
+  '/video/05.mov',
+  '/video/06.mov',
+  '/video/07.mov',
+  '/video/08.mov',
+  '/video/09.mov',
 ];
 
 const glbFiles = [
@@ -484,17 +481,8 @@ export default function ThreeMemoryScene() {
   // 現在のテーマを取得
   const currentTheme = THEMES[currentThemeIndex];
 
-  // ローカルストレージからテーマを復元
+  // テーマ変更イベントを監視（space/page.tsxからの変更を受信）
   useEffect(() => {
-    const savedThemeIndex = localStorage.getItem('themeIndex');
-    if (savedThemeIndex) {
-      const index = parseInt(savedThemeIndex, 10);
-      if (index >= 0 && index < THEMES.length) {
-        setCurrentThemeIndex(index);
-      }
-    }
-
-    // テーマ変更イベントを監視（space/page.tsxからの変更を受信）
     const handleThemeChange = (e: CustomEvent) => {
       const newThemeIndex = e.detail.themeIndex;
       if (newThemeIndex >= 0 && newThemeIndex < THEMES.length) {

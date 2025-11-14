@@ -17,15 +17,6 @@ export default function Page() {
   const currentTheme = THEMES[currentThemeIndex];
 
   useEffect(() => {
-    // ローカルストレージからテーマを復元
-    const savedThemeIndex = localStorage.getItem('themeIndex');
-    if (savedThemeIndex) {
-      const index = parseInt(savedThemeIndex, 10);
-      if (index >= 0 && index < THEMES.length) {
-        setCurrentThemeIndex(index);
-      }
-    }
-
     // 初期設定：モバイル判定
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 640);
@@ -100,7 +91,6 @@ export default function Page() {
   const switchTheme = () => {
     const nextThemeIndex = (currentThemeIndex + 1) % THEMES.length;
     setCurrentThemeIndex(nextThemeIndex);
-    localStorage.setItem('themeIndex', nextThemeIndex.toString());
 
     // ThreeMemorySceneにテーマ変更を通知
     const event = new CustomEvent('themeChanged', {
