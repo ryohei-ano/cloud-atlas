@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ANONYMOUS_USER_ID } from '@/lib/constants';
 import type { Memory } from '@/types';
+import { trackMemoryPost, trackError, trackTerminalAction, trackRateLimitHit } from '@/lib/analytics';
 
 interface Message {
   id: string;
@@ -249,10 +250,14 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
 
     const memory = inputValue.trim();
 
+    // Terminal submit action tracking
+    trackTerminalAction('submit');
+
     // 内容のバリデーション
     const validation = validateContent(memory);
     if (!validation.isValid) {
       addMessage(`✗ ${validation.reason}`, 'error');
+      trackError('validation_error', validation.reason || 'Unknown validation error');
       return;
     }
 
@@ -267,12 +272,23 @@ export default function TerminalStream({ onClose, isKeyboardOpen = false }: Term
 
       if (error) {
         addMessage(`✗ Error: ${error.message}`, 'error');
+
+        // Rate limit or other error tracking
+        if (error.message.includes('Too many') || error.message.includes('rate limit')) {
+          trackRateLimitHit('/api/post-memory', 60);
+        } else {
+          trackError('supabase_error', error.message);
+        }
       } else {
         addMessage(`✓ Posted [ID: ${ANONYMOUS_USER_ID}]`, 'success');
+
+        // Track successful memory post
+        trackMemoryPost(memory.length);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       addMessage(`✗ Error: ${errorMessage}`, 'error');
+      trackError('unknown_error', errorMessage);
     } finally {
       setIsSubmitting(false);
       setInputValue('');
