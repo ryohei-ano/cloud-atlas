@@ -26,11 +26,56 @@ import {
   generateRequestId,
 } from '@/lib/errorHandler';
 import { detectSpam, checkDuplicateMemory } from '@/lib/spamDetection';
+import { rateLimiter, RATE_LIMITS, getClientIp } from '@/lib/rateLimit';
 
 export async function POST(req: Request) {
   const requestId = generateRequestId();
 
   try {
+    // ===== 0. Rate Limit チェック =====
+    const ip = getClientIp(req);
+    const rateLimitIdentifier = `${ip}-/api/post-memory`;
+    const rateLimitResult = rateLimiter.check(
+      rateLimitIdentifier,
+      RATE_LIMITS.POST_MEMORY.limit,
+      RATE_LIMITS.POST_MEMORY.windowMs
+    );
+
+    if (!rateLimitResult.success) {
+      const retryAfter = Math.ceil((rateLimitResult.reset - Date.now()) / 1000);
+
+      logWarning('Rate limit exceeded', {
+        requestId,
+        ip: ip === 'unknown' ? 'unknown' : '[REDACTED]',
+        remainingTime: retryAfter,
+      });
+
+      return NextResponse.json(
+        {
+          error: 'Too many requests',
+          message: 'Rate limit exceeded. Please try again later.',
+          retryAfter,
+          requestId,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(retryAfter),
+            'X-RateLimit-Limit': String(RATE_LIMITS.POST_MEMORY.limit),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': new Date(rateLimitResult.reset).toISOString(),
+          },
+        }
+      );
+    }
+
+    // Rate limit情報をログに記録（デバッグ用）
+    logInfo('Rate limit check passed', {
+      requestId,
+      remaining: rateLimitResult.remaining,
+      limit: RATE_LIMITS.POST_MEMORY.limit,
+    });
+
     // ===== 1. Content-Typeチェック =====
     const contentType = req.headers.get('content-type');
     if (!isValidContentType(contentType)) {
@@ -149,7 +194,14 @@ export async function POST(req: Request) {
         data,
         requestId,
       },
-      { status: 201 }
+      {
+        status: 201,
+        headers: {
+          'X-RateLimit-Limit': String(RATE_LIMITS.POST_MEMORY.limit),
+          'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+          'X-RateLimit-Reset': new Date(rateLimitResult.reset).toISOString(),
+        },
+      }
     );
   } catch (err) {
     logError(err, { requestId });
