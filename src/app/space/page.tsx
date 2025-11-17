@@ -123,23 +123,32 @@ export default function Page() {
       </div>
 
       {/* ロゴ（左上） */}
-      <div className="fixed top-6 left-6 sm:absolute" style={{ zIndex: 9999 }}>
+      <div className="fixed top-6 left-6 sm:absolute" style={{ zIndex: 9999, mixBlendMode: 'difference' }}>
         <button
           onClick={() => (window.location.href = '/')}
-          className="block hover:opacity-80 transition-opacity duration-150 active:scale-95 cursor-pointer font-mono"
+          className="block hover:opacity-80 transition-opacity duration-150 active:scale-95 cursor-pointer"
           style={{
             pointerEvents: 'auto',
             position: 'relative',
             zIndex: 9999,
-            color: currentTheme.textColor,
-            fontSize: 'clamp(1rem, 4vw, 1.25rem)',
-            fontWeight: '400',
-            letterSpacing: '-0.02em',
-            fontFamily: 'var(--font-geist-mono)',
           }}
           aria-label="Cloud Atlas"
         >
-          Cloud Atlas
+          <div
+            style={{
+              height: 'clamp(1rem, 3vw, 1.5rem)',
+              width: 'clamp(8rem, 26vw, 10rem)',
+              backgroundColor: '#ffffff',
+              WebkitMaskImage: 'url(/image/logo.svg)',
+              maskImage: 'url(/image/logo.svg)',
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'left center',
+              maskPosition: 'left center',
+            }}
+          />
         </button>
       </div>
 
